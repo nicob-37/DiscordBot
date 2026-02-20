@@ -1,5 +1,6 @@
 package com.nic7.bot;
 
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -23,6 +24,7 @@ public class MessageListener extends ListenerAdapter {
 
             if (message.equalsIgnoreCase(command + " hello droid")) {
                 event.getChannel().sendMessage("Hello " + event.getAuthor().getName()).queue();
+
             }
 
             if (message.equalsIgnoreCase(command + " bulkScan")) {
@@ -32,9 +34,10 @@ public class MessageListener extends ListenerAdapter {
         }
 
         // 4. Reading specific content
-        if (message.toLowerCase().contains("apple")) {
-            event.getMessage().addReaction(net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode("🍎")).queue();
+        if (message.toLowerCase().contains("andy")) {
+            event.getMessage().reply("https://cdn.discordapp.com/attachments/1280707386012860476/1474229053920776252/andy.png?ex=6999164c&is=6997c4cc&hm=1897d39b0607e846e53fbfa96df8e88fd63f14b8555039ef90a8fc5022f14886&").queue();
         }
+
     }
 
     @Override

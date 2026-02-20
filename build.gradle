@@ -8,20 +8,26 @@ version = '1.0'
 
 repositories {
     mavenCentral()
+    maven { url 'https://repo.hypixel.net/repository/Hypixel/' }
 }
 
 dependencies {
-    // 1. The core JDA library
+    // JDA & Utilities
     implementation 'net.dv8tion:JDA:5.3.0'
-
-    // 2. Library to read .env files
     implementation 'io.github.cdimascio:dotenv-java:3.0.0'
-
-    // 3. Fixes the red @NotNull errors
     implementation 'org.jetbrains:annotations:24.0.0'
-
-    // 4. Logging for your Oracle Cloud server
     implementation 'ch.qos.logback:logback-classic:1.4.11'
+
+    // Use this version - it is the most stable for the official repo
+    implementation 'net.hypixel:hypixel-api-core:4.0'
+
+    // Required for the API to make web requests on your Oracle server
+    implementation 'org.apache.httpcomponents:httpclient:4.5.14'
+
+    implementation 'net.hypixel:hypixel-api-unirest:4.0'
+
+    // Required for GSON data processing
+    implementation 'com.google.code.gson:gson:2.10.1'
 }
 
 shadowJar {
@@ -33,4 +39,8 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
     }
+}
+
+test {
+    useJUnitPlatform()
 }
