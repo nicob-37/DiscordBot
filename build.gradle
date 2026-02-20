@@ -18,16 +18,6 @@ dependencies {
     implementation 'org.jetbrains:annotations:24.0.0'
     implementation 'ch.qos.logback:logback-classic:1.4.11'
 
-    // Use this version - it is the most stable for the official repo
-    implementation 'net.hypixel:hypixel-api-core:4.0'
-
-    // Required for the API to make web requests on your Oracle server
-    implementation 'org.apache.httpcomponents:httpclient:4.5.14'
-
-    implementation 'net.hypixel:hypixel-api-unirest:4.0'
-
-    // Required for GSON data processing
-    implementation 'com.google.code.gson:gson:2.10.1'
 }
 
 shadowJar {

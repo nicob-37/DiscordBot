@@ -1,29 +1,30 @@
 package com.nic7.bot;
 
-import com.nic7.bot.hypixel.GetInfo;
 import io.github.cdimascio.dotenv.Dotenv;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 
 public class Main {
 
     public static void main(String[] args) {
-        GetInfo getInfo = new GetInfo();
-
         Dotenv dotenv = Dotenv.load();
         String token = dotenv.get("DISCORD_TOKEN");
-        String hypixelAPI = dotenv.get("HYPIXEL_TOKEN");
+
+        CommandsManager commandsManager = new CommandsManager();
 
         if (token == null || token.isEmpty()) {
-            System.err.println("Check your .env file! Token is missing.");
+            System.err.println("!!! Check .env file Discord Token is missing !!!");
             return;
         }
 
-        getInfo.initAPIKey(hypixelAPI);
+        JDABuilder builder = JDABuilder.createDefault(token);
 
-        JDABuilder.createDefault(token)
-                .enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MESSAGES)
-                .addEventListeners(new CommandsClass())
-                .build();
+        builder.enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MESSAGES);
+
+        builder.addEventListeners(commandsManager);
+
+        JDA bot = builder.build();
+
     }
 }
