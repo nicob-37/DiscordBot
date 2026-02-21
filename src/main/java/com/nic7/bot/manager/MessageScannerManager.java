@@ -29,7 +29,8 @@ public class MessageScannerManager extends ListenerAdapter {
         if (message.contains("😳")) {
             event.getMessage().addReaction(Emoji.fromUnicode("\uD83D\uDE33")).queue();
         }
-        if (message.contains("🍔")) {
+
+        if (message.toLowerCase().contains("burger"))) {
             event.getMessage().addReaction(Emoji.fromUnicode("\uD83C\uDF54")).queue();
         }
 
