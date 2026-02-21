@@ -74,7 +74,7 @@ public class CommandsManager extends ListenerAdapter {
                     return;
                 }
 
-                event.reply("Launching independent update script... 🚀").queue(success -> {
+                event.reply("Restarting and checking for update...").queue(success -> {
                     try {
                         // setsid runs the script in its own session, independent of the bot
                         ProcessBuilder pb = new ProcessBuilder("setsid", "sh", "/home/ubuntu/DiscordBot/update_bot.sh");
