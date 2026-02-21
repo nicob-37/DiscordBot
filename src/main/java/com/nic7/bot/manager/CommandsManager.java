@@ -62,6 +62,7 @@ public class CommandsManager extends ListenerAdapter {
         // Add new commands below
         commandData.add(Commands.slash("stop", "Stops Bot"));
         commandData.add(Commands.slash("restart", "Restarts the bot"));
+        commandData.add(Commands.slash("testing", "Test me"));
 
         commandData.add(Commands.slash("hello", "Reply Hello"));
         commandData.add(Commands.slash("andyreply", "Toggle Andy heartbreak reply"));
@@ -119,6 +120,9 @@ public class CommandsManager extends ListenerAdapter {
 
             case "hello" ->
                     event.reply("Hello " + event.getMember().getEffectiveName()).queue();
+
+            case "testing" ->
+                    event.reply("Test Successful").queue();
 
             case "test" ->
                     event.reply("Test Command Successful").queue();
