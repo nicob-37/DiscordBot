@@ -34,7 +34,7 @@ public class CommandsManager extends ListenerAdapter {
         commandData.add(Commands.slash("testing_new", "Test me"));
 
         commandData.add(Commands.slash("hello", "Reply Hello"));
-        commandData.add(Commands.slash("andyreply", "Toggle Andy heartbreak reply"));
+        commandData.add(Commands.slash("toggle_andy_reply", "Toggle Andy heartbreak reply"));
 
         commandData.add(Commands.slash("redditpost", "Create A Post with Upvotes and Downvotes").
                 addOption(OptionType.STRING, "title", "The title of your post", true)
@@ -95,11 +95,14 @@ public class CommandsManager extends ListenerAdapter {
 
             case "testing_new" -> event.reply("Test Successful").queue();
 
-            case "test" -> event.reply("Test Command Successful").queue();
-
-            case "andyreply" -> {
-                util.andyReply = util.toggleBoolean(util.andyReply);
-                event.reply("Andy Reply is now " + util.andyReply).setEphemeral(true).queue(); }
+            case "toggle_andy_reply" -> {
+                if (!event.getUser().getId().equals(util.MY_ID)) {
+                    event.reply("Nice try, " + event.getUser().getEffectiveName()).queue();
+                } else {
+                    util.andyReply = util.toggleBoolean(util.andyReply);
+                    event.reply("Andy Reply is now " + util.andyReply).setEphemeral(true).queue();
+                }
+            }
 
             case "redditpost" -> {
                 String postBody = event.getOption("body").getAsString();
@@ -121,8 +124,6 @@ public class CommandsManager extends ListenerAdapter {
                 });
 
             }
-
-
         }
     }
 
