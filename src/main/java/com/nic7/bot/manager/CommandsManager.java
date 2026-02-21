@@ -104,18 +104,22 @@ public class CommandsManager extends ListenerAdapter {
                     event.reply("Nice try, " + event.getUser().getEffectiveName()).setEphemeral(true).queue();
                     return;
                 }
-                else {
-                    event.reply("Pulling Latest Changes and Restarting").queue(success -> {
-                        try {
-                            Runtime.getRuntime().exec("sh /home/ubuntu/update_bot.sh");
 
-                            event.getJDA().shutdown();
-                            System.exit(0);
-                        } catch (Exception e) {
-                            event.getChannel().sendMessage("Caught Exception while trying to launch restart script").queue();
-                        }
-                    });
-                }
+                event.reply("Launching independent update script... 🚀").queue(success -> {
+                    try {
+                        // setsid runs the script in its own session, independent of the bot
+                        ProcessBuilder pb = new ProcessBuilder("setsid", "sh", "/home/ubuntu/DiscordBot/update_bot.sh");
+                        pb.start();
+
+                        // Wait 1 second to ensure the script has actually started
+                        Thread.sleep(1000);
+
+                        event.getJDA().shutdown();
+                        System.exit(0);
+                    } catch (Exception e) {
+                        event.getChannel().sendMessage("Critical error: " + e.getMessage()).queue();
+                    }
+                });
             }
 
             case "hello" ->
