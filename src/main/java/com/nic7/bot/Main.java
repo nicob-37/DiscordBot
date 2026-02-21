@@ -1,6 +1,7 @@
 package com.nic7.bot;
 
 import com.nic7.bot.manager.CommandsManager;
+import com.nic7.bot.manager.MessageScannerManager;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -29,7 +30,7 @@ public class Main {
         builder.setChunkingFilter(ChunkingFilter.ALL);
         builder.enableCache(CacheFlag.ACTIVITY);
 
-        builder.addEventListeners(new CommandsManager());
+        builder.addEventListeners(new CommandsManager(), new MessageScannerManager());
 
         JDA bot = builder.build();
 

@@ -18,42 +18,11 @@ import java.util.List;
 public class CommandsManager extends ListenerAdapter {
 
     public static String command = "<>";
-    public static boolean andyReply = true;
 
     // Initializes Commands On Bot Ready
     @Override
     public void onReady(@NotNull net.dv8tion.jda.api.events.session.ReadyEvent event) {
         initSlashCommands(event);
-    }
-
-    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        if (event.getAuthor().isBot()) return;
-        String message = event.getMessage().getContentRaw();
-
-        if (message.toLowerCase().startsWith(command)) {
-
-
-        }
-
-        // Andy :heartbreak:
-        if (message.toLowerCase().contains("andy") && andyReply) {
-            java.io.InputStream andyImage = getClass().getResourceAsStream("/com/nic7/bot/file/andy.png");
-            if (andyImage != null) {
-                event.getMessage().replyFiles(FileUpload.fromData(andyImage, "andy.png")).queue();
-                event.getChannel().sendMessage("andy " + Emoji.fromUnicode("\uD83D\uDC94").getAsReactionCode()).queue();
-            }
-            else {
-                System.out.println("Couldn't find andy.png");
-            }
-        }
-
-        if (message.contains("😳")) {
-            event.getMessage().addReaction(Emoji.fromUnicode("\uD83D\uDE33")).queue();
-        }
-        if (message.contains("🍔")) {
-            event.getMessage().addReaction(Emoji.fromUnicode("\uD83C\uDF54")).queue();
-        }
-
     }
 
     private void initSlashCommands(@NotNull net.dv8tion.jda.api.events.session.ReadyEvent event) {
@@ -122,18 +91,15 @@ public class CommandsManager extends ListenerAdapter {
                 });
             }
 
-            case "hello" ->
-                    event.reply("Hello " + event.getMember().getEffectiveName()).queue();
+            case "hello" -> event.reply("Hello " + event.getMember().getEffectiveName()).queue();
 
-            case "testing_new" ->
-                    event.reply("Test Successful").queue();
+            case "testing_new" -> event.reply("Test Successful").queue();
 
-            case "test" ->
-                    event.reply("Test Command Successful").queue();
+            case "test" -> event.reply("Test Command Successful").queue();
 
             case "andyreply" -> {
-                CommandsManager.andyReply = util.toggleBoolean(CommandsManager.andyReply);
-                event.reply("Andy Reply is now " + CommandsManager.andyReply).queue(); }
+                util.andyReply = util.toggleBoolean(util.andyReply);
+                event.reply("Andy Reply is now " + util.andyReply).setEphemeral(true).queue(); }
 
             case "redditpost" -> {
                 String postBody = event.getOption("body").getAsString();
