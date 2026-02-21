@@ -34,5 +34,13 @@ public class MessageScannerManager extends ListenerAdapter {
             event.getMessage().addReaction(Emoji.fromUnicode("\uD83C\uDF54")).queue();
         }
 
+        // Andy or Aiden
+        if (event.getAuthor().getId().equals(util.ANDY) || event.getAuthor().getId().equals(util.AIDEN)) {
+            event.getMessage().addReaction(Emoji.fromUnicode("\\uD83C\\uDDE7")).queue();
+            event.getMessage().addReaction(Emoji.fromUnicode("\\uD83C\\uDDF7")).queue();
+            event.getMessage().addReaction(Emoji.fromUnicode("\\uD83C\\uDDFA")).queue();
+            event.getMessage().addReaction(Emoji.fromUnicode("\\uD83C\\uDDED")).queue();
+        }
+
     }
 }
