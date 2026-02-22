@@ -110,7 +110,12 @@ public class CommandsManager extends ListenerAdapter {
                 String postTitle = event.getOption("title").getAsString();
                 var attachmentOption = event.getOption("attachment");
 
-                var replyAction = event.reply("# " + postTitle + "\n" + postBody);
+                var replyAction = event.reply(
+                        "# " + postTitle
+                                + "\n"
+                                + postBody
+                                + "\n"
+                                + "__" + "Post created by " + event.getUser().getName() + "__");
 
                 if (attachmentOption != null) {
                     Message.Attachment attachment = attachmentOption.getAsAttachment();

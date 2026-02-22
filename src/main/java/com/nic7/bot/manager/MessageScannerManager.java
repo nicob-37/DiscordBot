@@ -27,13 +27,9 @@ public class MessageScannerManager extends ListenerAdapter {
             }
         }
 
-        if (message.contains("😳")) {
-            event.getMessage().addReaction(Emoji.fromUnicode("\uD83D\uDE33")).queue();
-        }
+        if (message.contains("😳")) {event.getMessage().addReaction(Emoji.fromUnicode("\uD83D\uDE33")).queue();}
 
-        if (message.toLowerCase().contains("burger")) {
-            event.getMessage().addReaction(Emoji.fromUnicode("\uD83C\uDF54")).queue();
-        }
+        if (message.toLowerCase().contains("burger")) {event.getMessage().addReaction(Emoji.fromUnicode("\uD83C\uDF54")).queue();}
 
         // Andy or Aiden
         if (event.getAuthor().getId().equals(ID.ANDY) || event.getAuthor().getId().equals(ID.AIDEN)) {
