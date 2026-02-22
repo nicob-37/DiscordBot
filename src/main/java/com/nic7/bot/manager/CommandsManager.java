@@ -23,7 +23,7 @@ public class CommandsManager extends ListenerAdapter {
     @Override
     public void onReady(@NotNull net.dv8tion.jda.api.events.session.ReadyEvent event) {
         initSlashCommands(event);
-        event.getJDA().getPresence().setActivity(Activity.customStatus("Hello Sigma Nation!"));
+        //event.getJDA().getPresence().setActivity(Activity.customStatus("Hello Sigma Nation!"));
     }
 
     private void initSlashCommands(@NotNull net.dv8tion.jda.api.events.session.ReadyEvent event) {
@@ -39,7 +39,7 @@ public class CommandsManager extends ListenerAdapter {
         commandData.add(Commands.slash("toggle_aiden_bruh", "Toggle Aiden Bruh"));
 
         commandData.add(Commands.slash("set_status", "Sets the custom status of nic7")
-                .addOption(OptionType.STRING, "Status", "Status", true));
+                .addOption(OptionType.STRING, "status", "Status", true));
 
         commandData.add(Commands.slash("redditpost", "Create A Post with Upvotes and Downvotes")
                 .addOption(OptionType.STRING, "title", "The title of your post", true)
@@ -150,7 +150,7 @@ public class CommandsManager extends ListenerAdapter {
                     return;
                 }
                 else {
-                    String newActivity = event.getOption("Status").getAsString();
+                    String newActivity = event.getOption("status").getAsString();
 
                     event.getJDA().getPresence().setActivity(Activity.customStatus(newActivity));
                     event.reply("Status updated to: ** " + newActivity + "**").queue();
