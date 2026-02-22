@@ -96,7 +96,7 @@ public class CommandsManager extends ListenerAdapter {
                 });
             }
 
-            case "hello" -> event.reply("pong " + event.getMember().getEffectiveName()).queue();
+            case "ping" -> event.reply("pong " + event.getMember().getEffectiveName()).queue();
 
             case "version" -> event.reply("Version #" + util.VERSION).queue();
 
