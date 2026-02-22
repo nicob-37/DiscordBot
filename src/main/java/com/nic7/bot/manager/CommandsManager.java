@@ -2,6 +2,7 @@ package com.nic7.bot.manager;
 
 import com.nic7.bot.ID;
 import com.nic7.bot.util;
+import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -22,6 +23,7 @@ public class CommandsManager extends ListenerAdapter {
     @Override
     public void onReady(@NotNull net.dv8tion.jda.api.events.session.ReadyEvent event) {
         initSlashCommands(event);
+        event.getJDA().getPresence().setActivity(Activity.customStatus("Hello Sigma Nation!"));
     }
 
     private void initSlashCommands(@NotNull net.dv8tion.jda.api.events.session.ReadyEvent event) {
@@ -36,8 +38,11 @@ public class CommandsManager extends ListenerAdapter {
         commandData.add(Commands.slash("toggle_andy_reply", "Toggle Andy heartbreak reply"));
         commandData.add(Commands.slash("toggle_aiden_bruh", "Toggle Aiden Bruh"));
 
-        commandData.add(Commands.slash("redditpost", "Create A Post with Upvotes and Downvotes").
-                addOption(OptionType.STRING, "title", "The title of your post", true)
+        commandData.add(Commands.slash("set_status", "Sets the custom status of nic7")
+                .addOption(OptionType.STRING, "Status", "Status", true));
+
+        commandData.add(Commands.slash("redditpost", "Create A Post with Upvotes and Downvotes")
+                .addOption(OptionType.STRING, "title", "The title of your post", true)
                 .addOption(OptionType.STRING, "body", "The Main Content of your post", true)
                 .addOption(OptionType.ATTACHMENT, "attachment", "Add an attachment to your post (optional)", false));
 
@@ -137,6 +142,19 @@ public class CommandsManager extends ListenerAdapter {
                     });
                 });
 
+            }
+
+            case "set_status" -> {
+                if (!event.getUser().getId().equals(ID.MY_ID)) {
+                    event.reply("Nice try, " + event.getUser().getEffectiveName()).setEphemeral(true).queue();
+                    return;
+                }
+                else {
+                    String newActivity = event.getOption("Status").getAsString();
+
+                    event.getJDA().getPresence().setActivity(Activity.customStatus(newActivity));
+                    event.reply("Status updated to: ** " + newActivity + "**").queue();
+                }
             }
         }
     }
