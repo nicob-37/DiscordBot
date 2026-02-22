@@ -1,5 +1,6 @@
 package com.nic7.bot.manager;
 
+import com.nic7.bot.ID;
 import com.nic7.bot.util;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -15,7 +16,7 @@ public class StatusManager extends ListenerAdapter {
     public void onUserUpdateActivities(@NotNull UserUpdateActivitiesEvent event) {
         if (!event.getUser().getId().equals("YOUR_USER_ID")) return;
 
-        TextChannel channel = event.getGuild().getTextChannelById(util.NIC7_LOGS);
+        TextChannel channel = event.getGuild().getTextChannelById(ID.NIC7_LOGS);
         if (channel == null) return;
 
         String currentStatus = "";

@@ -1,5 +1,6 @@
 package com.nic7.bot.manager;
 
+import com.nic7.bot.ID;
 import com.nic7.bot.util;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -35,7 +36,7 @@ public class MessageScannerManager extends ListenerAdapter {
         }
 
         // Andy or Aiden
-        if (event.getAuthor().getId().equals(util.ANDY) || event.getAuthor().getId().equals(util.AIDEN)) {
+        if (event.getAuthor().getId().equals(ID.ANDY) || event.getAuthor().getId().equals(ID.AIDEN)) {
             event.getMessage().addReaction(Emoji.fromUnicode("\uD83C\uDDE7")).queue(v -> {
                 event.getMessage().addReaction(Emoji.fromUnicode("\uD83C\uDDF7")).queue(v2 -> {
                     event.getMessage().addReaction(Emoji.fromUnicode("\uD83C\uDDFA")).queue(v3 -> {

@@ -1,5 +1,6 @@
 package com.nic7.bot.manager;
 
+import com.nic7.bot.ID;
 import com.nic7.bot.util;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -41,13 +42,13 @@ public class CommandsManager extends ListenerAdapter {
                 .addOption(OptionType.STRING, "body", "The Main Content of your post", true)
                 .addOption(OptionType.ATTACHMENT, "attachment", "Add an attachment to your post (optional)", false));
 
-        var guild = event.getJDA().getGuildById(util.SIG_NATION);
+        var guild = event.getJDA().getGuildById(ID.SIG_NATION);
 
         if (guild != null) {
             guild.updateCommands().addCommands(commandData).queue();
             System.out.println("Slash Commands Updated for " + guild.getName());
         } else {
-            System.err.println("Could not find Guild ID: " + util.SIG_NATION);
+            System.err.println("Could not find Guild ID: " + ID.SIG_NATION);
         }
     }
 
@@ -56,7 +57,7 @@ public class CommandsManager extends ListenerAdapter {
         switch (event.getName()) {
 
             case "stop" -> {
-                if (!event.getUser().getId().equals(util.MY_ID)) {
+                if (!event.getUser().getId().equals(ID.MY_ID)) {
                     event.reply("Nice try, " + event.getUser().getEffectiveName()).setEphemeral(true).queue();
                     return;
                 }
@@ -69,7 +70,7 @@ public class CommandsManager extends ListenerAdapter {
             }
 
             case "restart" -> {
-                if (!event.getUser().getId().equals(util.MY_ID)) {
+                if (!event.getUser().getId().equals(ID.MY_ID)) {
                     event.reply("Nice try, " + event.getUser().getEffectiveName()).setEphemeral(true).queue();
                     return;
                 }
@@ -96,7 +97,7 @@ public class CommandsManager extends ListenerAdapter {
             case "version" -> event.reply("Version #" + util.VERSION).queue();
 
             case "toggle_andy_reply" -> {
-                if (!event.getUser().getId().equals(util.MY_ID)) {
+                if (!event.getUser().getId().equals(ID.MY_ID)) {
                     event.reply("Nice try, " + event.getUser().getEffectiveName()).queue();
                 } else {
                     util.andyReply = util.toggleBoolean(util.andyReply);
