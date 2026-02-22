@@ -104,7 +104,7 @@ public class CommandsManager extends ListenerAdapter {
                 }
             }
 
-            case "toggle_aiden_reply" -> {
+            case "toggle_aiden_bruh" -> {
                 if (!event.getUser().getId().equals(ID.MY_ID)) {
                     event.reply("Nice try, " + event.getUser().getEffectiveName()).queue();
                 } else {
