@@ -31,7 +31,7 @@ public class CommandsManager extends ListenerAdapter {
         // Add new commands below
         commandData.add(Commands.slash("stop", "Stops Bot"));
         commandData.add(Commands.slash("restart", "Restarts the bot"));
-        commandData.add(Commands.slash("testing_new", "Test me"));
+        commandData.add(Commands.slash("version", "Get current bot version"));
 
         commandData.add(Commands.slash("hello", "Reply Hello"));
         commandData.add(Commands.slash("toggle_andy_reply", "Toggle Andy heartbreak reply"));
@@ -93,7 +93,7 @@ public class CommandsManager extends ListenerAdapter {
 
             case "hello" -> event.reply("Hello " + event.getMember().getEffectiveName()).queue();
 
-            case "testing_new" -> event.reply("Test Successful").queue();
+            case "version" -> event.reply("Version #" + util.VERSION).queue();
 
             case "toggle_andy_reply" -> {
                 if (!event.getUser().getId().equals(util.MY_ID)) {
