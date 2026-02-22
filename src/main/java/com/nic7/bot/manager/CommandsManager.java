@@ -18,8 +18,6 @@ import java.util.List;
 
 public class CommandsManager extends ListenerAdapter {
 
-    public static String command = "<>";
-
     // Initializes Commands On Bot Ready
     @Override
     public void onReady(@NotNull net.dv8tion.jda.api.events.session.ReadyEvent event) {
@@ -33,9 +31,10 @@ public class CommandsManager extends ListenerAdapter {
         commandData.add(Commands.slash("stop", "Stops Bot"));
         commandData.add(Commands.slash("restart", "Restarts the bot"));
         commandData.add(Commands.slash("version", "Get current bot version"));
+        commandData.add(Commands.slash("ping", "pong"));
 
-        commandData.add(Commands.slash("hello", "Reply Hello"));
         commandData.add(Commands.slash("toggle_andy_reply", "Toggle Andy heartbreak reply"));
+        commandData.add(Commands.slash("toggle_aiden_bruh", "Toggle Aiden Bruh"));
 
         commandData.add(Commands.slash("redditpost", "Create A Post with Upvotes and Downvotes").
                 addOption(OptionType.STRING, "title", "The title of your post", true)
@@ -92,7 +91,7 @@ public class CommandsManager extends ListenerAdapter {
                 });
             }
 
-            case "hello" -> event.reply("Hello " + event.getMember().getEffectiveName()).queue();
+            case "hello" -> event.reply("pong " + event.getMember().getEffectiveName()).queue();
 
             case "version" -> event.reply("Version #" + util.VERSION).queue();
 
@@ -102,6 +101,15 @@ public class CommandsManager extends ListenerAdapter {
                 } else {
                     util.andyReply = util.toggleBoolean(util.andyReply);
                     event.reply("Andy Reply is now " + util.andyReply).setEphemeral(true).queue();
+                }
+            }
+
+            case "toggle_aiden_reply" -> {
+                if (!event.getUser().getId().equals(ID.MY_ID)) {
+                    event.reply("Nice try, " + event.getUser().getEffectiveName()).queue();
+                } else {
+                    util.aidenBruh = util.toggleBoolean(util.aidenBruh);
+                    event.reply("Aiden bruh is now " + util.aidenBruh).setEphemeral(true).queue();
                 }
             }
 
