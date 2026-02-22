@@ -115,7 +115,7 @@ public class CommandsManager extends ListenerAdapter {
                                 + "\n"
                                 + postBody
                                 + "\n"
-                                + "__" + "Post created by " + event.getUser().getName() + "__");
+                                + "-# __" + "Post created by " + event.getUser().getName() + "__");
 
                 if (attachmentOption != null) {
                     Message.Attachment attachment = attachmentOption.getAsAttachment();
