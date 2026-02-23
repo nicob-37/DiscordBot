@@ -6,7 +6,6 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -36,7 +35,8 @@ public class CommandsManager extends ListenerAdapter {
         commandData.add(Commands.slash("ping", "pong"));
 
         commandData.add(Commands.slash("toggle_andy_reply", "Toggle Andy heartbreak reply"));
-        commandData.add(Commands.slash("toggle_aiden_bruh", "Toggle Aiden Bruh"));
+        commandData.add(Commands.slash("toggle_react_bruh", "Toggle Bruh Reaction")
+                .addOption(OptionType.MENTIONABLE, "user", "Aiden or Andy", true));
 
         commandData.add(Commands.slash("set_status", "Sets the custom status of nic7")
                 .addOption(OptionType.STRING, "status", "Status", true));
@@ -61,7 +61,7 @@ public class CommandsManager extends ListenerAdapter {
         switch (event.getName()) {
 
             case "stop" -> {
-                if (!event.getUser().getId().equals(ID.MY_ID)) {
+                if (!event.getUser().getId().equals(ID.NICO)) {
                     event.reply("Nice try, " + event.getUser().getEffectiveName()).setEphemeral(true).queue();
                     return;
                 }
@@ -74,7 +74,7 @@ public class CommandsManager extends ListenerAdapter {
             }
 
             case "restart" -> {
-                if (!event.getUser().getId().equals(ID.MY_ID)) {
+                if (!event.getUser().getId().equals(ID.NICO)) {
                     event.reply("Nice try, " + event.getUser().getEffectiveName()).setEphemeral(true).queue();
                     return;
                 }
@@ -101,7 +101,7 @@ public class CommandsManager extends ListenerAdapter {
             case "version" -> event.reply("Version #" + util.VERSION).queue();
 
             case "toggle_andy_reply" -> {
-                if (!event.getUser().getId().equals(ID.MY_ID)) {
+                if (!event.getUser().getId().equals(ID.NICO)) {
                     event.reply("Nice try, " + event.getUser().getEffectiveName()).queue();
                 } else {
                     util.andyReply = util.toggleBoolean(util.andyReply);
@@ -109,12 +109,26 @@ public class CommandsManager extends ListenerAdapter {
                 }
             }
 
-            case "toggle_aiden_bruh" -> {
-                if (!event.getUser().getId().equals(ID.MY_ID)) {
+            case "toggle_react_bruh" -> {
+                if (!event.getUser().getId().equals(ID.NICO)) {
                     event.reply("Nice try, " + event.getUser().getEffectiveName()).queue();
+                    return;
                 } else {
-                    util.aidenBruh = util.toggleBoolean(util.aidenBruh);
-                    event.reply("Aiden bruh is now " + util.aidenBruh).setEphemeral(true).queue();
+                    String user = event.getOption("user").getAsUser().getId();
+                    String returnMessage;
+
+                    if (user.equals(ID.ANDY)) {
+                        util.andyBruh = util.toggleBoolean(util.andyBruh);
+                        returnMessage = "Andy Bruh is now " + util.andyBruh;
+                    }
+                    else if (user.equals(ID.AIDEN)) {
+                        util.aidenBruh = util.toggleBoolean(util.aidenBruh);
+                        returnMessage = "Aiden Bruh is now " + util.aidenBruh;
+                    }
+                    else {
+                        returnMessage = "User not valid";
+                    }
+                    event.reply(returnMessage).setEphemeral(true).queue();
                 }
             }
 
@@ -145,7 +159,7 @@ public class CommandsManager extends ListenerAdapter {
             }
 
             case "set_status" -> {
-                if (!event.getUser().getId().equals(ID.MY_ID)) {
+                if (!event.getUser().getId().equals(ID.NICO)) {
                     event.reply("Nice try, " + event.getUser().getEffectiveName()).setEphemeral(true).queue();
                     return;
                 }

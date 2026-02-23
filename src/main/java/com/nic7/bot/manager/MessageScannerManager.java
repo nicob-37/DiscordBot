@@ -32,7 +32,7 @@ public class MessageScannerManager extends ListenerAdapter {
         if (message.toLowerCase().contains("burger")) {event.getMessage().addReaction(Emoji.fromUnicode("\uD83C\uDF54")).queue();}
 
         // Andy or Aiden
-        if (event.getAuthor().getId().equals(ID.ANDY) || event.getAuthor().getId().equals(ID.AIDEN)) {
+        if ( (event.getAuthor().getId().equals(ID.ANDY) && util.andyBruh)|| (event.getAuthor().getId().equals(ID.AIDEN) && util.aidenBruh) ) {
             event.getMessage().addReaction(Emoji.fromUnicode("\uD83C\uDDE7")).queue(v -> {
                 event.getMessage().addReaction(Emoji.fromUnicode("\uD83C\uDDF7")).queue(v2 -> {
                     event.getMessage().addReaction(Emoji.fromUnicode("\uD83C\uDDFA")).queue(v3 -> {
