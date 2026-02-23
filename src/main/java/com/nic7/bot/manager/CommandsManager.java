@@ -26,30 +26,33 @@ public class CommandsManager extends ListenerAdapter {
     }
 
     private void initSlashCommands(@NotNull net.dv8tion.jda.api.events.session.ReadyEvent event) {
-        List<SlashCommandData> commandData = new ArrayList<>();
+        List<SlashCommandData> commands = new ArrayList<>();
 
-        // Add new commands below
-        commandData.add(Commands.slash("stop", "Stops Bot"));
-        commandData.add(Commands.slash("restart", "Restarts the bot"));
-        commandData.add(Commands.slash("version", "Get current bot version"));
-        commandData.add(Commands.slash("ping", "pong"));
+        commands.add(Commands.slash("stop", "Stops Bot"));
+        commands.add(Commands.slash("restart", "Restarts the bot"));
+        commands.add(Commands.slash("version", "Get current bot version"));
+        commands.add(Commands.slash("ping", "pong"));
 
-        commandData.add(Commands.slash("toggle_andy_reply", "Toggle Andy heartbreak reply"));
-        commandData.add(Commands.slash("toggle_react_bruh", "Toggle Bruh Reaction")
+        commands.add(Commands.slash("toggle_andy_reply", "Toggle Andy heartbreak reply"));
+        commands.add(Commands.slash("toggle_react_bruh", "Toggle Bruh Reaction")
                 .addOption(OptionType.MENTIONABLE, "user", "Aiden or Andy", true));
 
-        commandData.add(Commands.slash("set_status", "Sets the custom status of nic7")
+        commands.add(Commands.slash("set_status", "Sets the custom status of nic7")
                 .addOption(OptionType.STRING, "status", "Status", true));
 
-        commandData.add(Commands.slash("redditpost", "Create A Post with Upvotes and Downvotes")
+        commands.add(Commands.slash("redditpost", "Create A Post with Upvotes and Downvotes")
                 .addOption(OptionType.STRING, "title", "The title of your post", true)
                 .addOption(OptionType.STRING, "body", "The Main Content of your post", true)
                 .addOption(OptionType.ATTACHMENT, "attachment", "Add an attachment to your post (optional)", false));
 
+        commands.add(Commands.slash("get_id", "Gets a user's ID")
+                .addOption(OptionType.MENTIONABLE, "user", "user", true));
+
+
         var guild = event.getJDA().getGuildById(ID.SIG_NATION);
 
         if (guild != null) {
-            guild.updateCommands().addCommands(commandData).queue();
+            guild.updateCommands().addCommands(commands).queue();
             System.out.println("Slash Commands Updated for " + guild.getName());
         } else {
             System.err.println("Could not find Guild ID: " + ID.SIG_NATION);
@@ -169,6 +172,13 @@ public class CommandsManager extends ListenerAdapter {
                     event.getJDA().getPresence().setActivity(Activity.customStatus(newActivity));
                     event.reply("Status updated to: ** " + newActivity + "**").queue();
                 }
+            }
+
+            case "get_id" -> {
+                String user = event.getOption("user").getAsUser().getId();
+                String userName = event.getOption("user").getAsUser().getEffectiveName();
+
+                event.reply(userName +"'s ID is: " + user).queue();
             }
         }
     }
