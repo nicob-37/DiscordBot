@@ -35,7 +35,7 @@ public class CommandsManager extends ListenerAdapter {
 
         commands.add(Commands.slash("toggle_andy_reply", "Toggle Andy heartbreak reply"));
         commands.add(Commands.slash("toggle_react_bruh", "Toggle Bruh Reaction")
-                .addOption(OptionType.MENTIONABLE, "user", "Aiden or Andy", true));
+                .addOption(OptionType.USER, "user", "Aiden or Andy", true));
 
         commands.add(Commands.slash("set_status", "Sets the custom status of nic7")
                 .addOption(OptionType.STRING, "status", "Status", true));
@@ -46,7 +46,7 @@ public class CommandsManager extends ListenerAdapter {
                 .addOption(OptionType.ATTACHMENT, "attachment", "Add an attachment to your post (optional)", false));
 
         commands.add(Commands.slash("get_id", "Gets a user's ID")
-                .addOption(OptionType.MENTIONABLE, "user", "user", true));
+                .addOption(OptionType.USER, "user", "user", true));
 
 
         var guild = event.getJDA().getGuildById(ID.SIG_NATION);
