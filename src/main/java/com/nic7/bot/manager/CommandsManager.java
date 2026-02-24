@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.utils.FileUpload;
@@ -21,11 +22,6 @@ public class CommandsManager extends ListenerAdapter {
     // Initializes Commands On Bot Ready
     @Override
     public void onReady(@NotNull net.dv8tion.jda.api.events.session.ReadyEvent event) {
-        initSlashCommands(event);
-        //event.getJDA().getPresence().setActivity(Activity.customStatus("Hello Sigma Nation!"));
-    }
-
-    private void initSlashCommands(@NotNull net.dv8tion.jda.api.events.session.ReadyEvent event) {
         List<SlashCommandData> commands = new ArrayList<>();
 
         commands.add(Commands.slash("stop", "Stops Bot"));
@@ -57,6 +53,41 @@ public class CommandsManager extends ListenerAdapter {
         } else {
             System.err.println("Could not find Guild ID: " + ID.SIG_NATION);
         }
+
+        event.getJDA().getPresence().setActivity(Activity.customStatus("Hello Sigma Nation"));
+    }
+
+    public static class SlashCommandEx {
+        String name, description;
+        boolean protection;
+        String authorizedID;
+
+        public SlashCommandEx(String name, String description, boolean protection, String authorizedID) {
+            this.name = name; this.description = description; this.protection = protection; this.authorizedID = authorizedID;
+        }
+
+        public SlashCommandEx(String name, String description) {
+            this.name = name; this.description = description; this.protection = false;
+        }
+
+    }
+
+    private boolean isAuthorized(SlashCommandInteraction event, String authorizedID) {
+        if (event.getUser().getId().equals(authorizedID)) return true;
+
+        return event.getMember() != null &&
+                event.getMember().getRoles().stream()
+                        .anyMatch(role -> role.getId().equals(authorizedID));
+    }
+
+    public void initSlashCommandsEx(@NotNull net.dv8tion.jda.api.events.session.ReadyEvent event) {
+        List<SlashCommandEx> commands = new ArrayList<>();
+        var guild = event.getJDA().getGuildById(ID.SIG_NATION);
+
+        commands.add(new SlashCommandEx("ping", "pong"));
+        commands.add(new SlashCommandEx("stop", "Stops Bot", true, ID.NICO));
+
+        //guild.updateCommands().addCommands(commands).queue();
     }
 
     @Override
@@ -174,12 +205,7 @@ public class CommandsManager extends ListenerAdapter {
                 }
             }
 
-            case "get_id" -> {
-                String user = event.getOption("user").getAsUser().getId();
-                String userName = event.getOption("user").getAsUser().getEffectiveName();
-
-                event.reply(userName +"'s ID is: " + user).queue();
-            }
+            case "get_id" -> event.reply(event.getOption("user").getAsUser().getEffectiveName() +"'s ID is: " + event.getOption("user").getAsUser().getId()).queue();
         }
     }
 
