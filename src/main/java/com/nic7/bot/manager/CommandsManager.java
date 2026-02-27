@@ -122,7 +122,7 @@ public class CommandsManager extends ListenerAdapter {
         commands.add(new SlashCommandEx("get_avatar", "gets a user's custom avatar")
                 .addOption(OptionType.USER, "user", ".", true));
 
-        commands.add(new SlashCommandEx("randomize_status", "", true, ID.NICO));
+        commands.add(new SlashCommandEx("randomize_status", ".", true, ID.NICO));
 
         List<SlashCommandData> jdaData = new ArrayList<>();
 
