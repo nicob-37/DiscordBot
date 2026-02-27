@@ -341,9 +341,8 @@ public class CommandsManager extends ListenerAdapter {
 
             case "message" -> {
                 var message = event.getOption("body").getAsString();
-
-                event.reply("").setEphemeral(true).queue();
                 event.getChannel().sendMessage(message).queue();
+                event.deferReply().queue();
             }
         }
     }
