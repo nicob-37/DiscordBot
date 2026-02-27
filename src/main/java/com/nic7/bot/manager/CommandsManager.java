@@ -4,7 +4,9 @@ import com.nic7.bot.ID;
 import com.nic7.bot.util;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.events.GatewayPingEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -112,6 +114,11 @@ public class CommandsManager extends ListenerAdapter {
                 .addOption(OptionType.ATTACHMENT, "attachment", "Optional attachment", false));
 
         commands.add(new SlashCommandEx("ping", "pong"));
+
+        commands.add(new SlashCommandEx("threaten", "insert text here", true, ID.NICO)
+                .addOption(OptionType.USER, "user", "insert text here",true));
+
+        //commands.add(new SlashCommandEx("test_embed", "Testing embed"));
 
         List<SlashCommandData> jdaData = new ArrayList<>();
 
@@ -261,7 +268,6 @@ public class CommandsManager extends ListenerAdapter {
             }
         }
 
-        // 3. Your existing switch-case (you can now remove the manual ID checks inside the cases!)
         switch (event.getName()) {
 
             case "stop" -> {
@@ -331,6 +337,12 @@ public class CommandsManager extends ListenerAdapter {
             case "toggle_andy_reply" -> {
                 util.andyReply = util.toggleBoolean(util.andyReply);
                 event.reply("Andy Reply is now " + util.andyReply).setEphemeral(true).queue();
+            }
+
+            case "threaten" -> {
+                var userPing = event.getOption("user").getAsUser().getAsMention();
+
+                event.getChannel().sendMessage(userPing + " hey.").queue();
             }
         }
     }
