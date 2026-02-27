@@ -339,6 +339,24 @@ public class CommandsManager extends ListenerAdapter {
                 event.reply("Andy Reply is now " + util.andyReply).setEphemeral(true).queue();
             }
 
+            case "toggle_bruh" -> {
+                var user = event.getOption("user").getAsUser().getId();
+
+                if (user.equals(ID.ANDY)) {
+                    util.andyBruh = util.toggleBoolean(util.andyBruh);
+                    event.reply("andyBruh is now " + util.andyBruh).setEphemeral(true).queue();
+                }
+                else if (user.equals(ID.AIDEN)) {
+                    util.aidenBruh = util.toggleBoolean(util.aidenBruh);
+                    event.reply("aidenBruh is now " + util.aidenBruh).setEphemeral(true).queue();
+                }
+                else {
+                    event.deferReply().queue();
+                    return;
+                }
+
+            }
+
             case "message" -> {
                 var message = event.getOption("body").getAsString();
                 event.getChannel().sendMessage(message).queue();
