@@ -115,8 +115,8 @@ public class CommandsManager extends ListenerAdapter {
 
         commands.add(new SlashCommandEx("ping", "pong"));
 
-        commands.add(new SlashCommandEx("threaten", "insert text here", true, ID.NICO)
-                .addOption(OptionType.USER, "user", "insert text here",true));
+        commands.add(new SlashCommandEx("message", "insert text here", true, ID.NICO)
+                .addOption(OptionType.STRING, "body", "insert text here", true));
 
         //commands.add(new SlashCommandEx("test_embed", "Testing embed"));
 
@@ -339,10 +339,11 @@ public class CommandsManager extends ListenerAdapter {
                 event.reply("Andy Reply is now " + util.andyReply).setEphemeral(true).queue();
             }
 
-            case "threaten" -> {
-                var userPing = event.getOption("user").getAsUser().getAsMention();
+            case "message" -> {
+                var message = event.getOption("body").getAsString();
+
                 event.reply("").setEphemeral(true).queue();
-                event.getChannel().sendMessage(userPing + " hello...").queue();
+                event.getChannel().sendMessage(message).queue();
             }
         }
     }
