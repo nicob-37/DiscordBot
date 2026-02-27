@@ -19,7 +19,7 @@ public class StatusManager extends ListenerAdapter {
 
     @Override
     public void onReady(ReadyEvent event) {
-        event.getJDA().getPresence().setActivity(Activity.customStatus("Hello Sigma Nation!"));
+        event.getJDA().getPresence().setActivity(Activity.customStatus("Default Status Here"));
     }
 
     @Override
