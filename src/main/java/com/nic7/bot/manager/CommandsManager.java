@@ -118,7 +118,8 @@ public class CommandsManager extends ListenerAdapter {
         commands.add(new SlashCommandEx("message", "insert text here", true, ID.NICO)
                 .addOption(OptionType.STRING, "body", "insert text here", true));
 
-        //commands.add(new SlashCommandEx("test_embed", "Testing embed"));
+        commands.add(new SlashCommandEx("get_avatar", "gets a user's custom avatar")
+                .addOption(OptionType.USER, "user", ".", true));
 
         List<SlashCommandData> jdaData = new ArrayList<>();
 
@@ -361,6 +362,11 @@ public class CommandsManager extends ListenerAdapter {
                 var message = event.getOption("body").getAsString();
                 event.getChannel().sendMessage(message).queue();
                 event.deferReply().setEphemeral(true).queue();
+            }
+
+            case "get_avatar" -> {
+                var user = event.getOption("user").getAsUser().getEffectiveAvatarUrl();
+                event.reply(user).queue();
             }
         }
     }
