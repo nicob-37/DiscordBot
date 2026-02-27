@@ -341,8 +341,8 @@ public class CommandsManager extends ListenerAdapter {
 
             case "threaten" -> {
                 var userPing = event.getOption("user").getAsUser().getAsMention();
-
-                event.getChannel().sendMessage(userPing + " hey.").queue();
+                event.reply("").setEphemeral(true).queue();
+                event.getChannel().sendMessage(userPing + " hello...").queue();
             }
         }
     }
