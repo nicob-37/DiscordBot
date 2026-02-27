@@ -22,6 +22,7 @@ import java.util.List;
 
 public class CommandsManager extends ListenerAdapter {
     List<SlashCommandEx> commands = new ArrayList<>();
+    StatusManager sm = new StatusManager();
 
     // Initializes Commands On Bot Ready
     @Override
@@ -120,6 +121,8 @@ public class CommandsManager extends ListenerAdapter {
 
         commands.add(new SlashCommandEx("get_avatar", "gets a user's custom avatar")
                 .addOption(OptionType.USER, "user", ".", true));
+
+        commands.add(new SlashCommandEx("randomize_status", "", true, ID.NICO));
 
         List<SlashCommandData> jdaData = new ArrayList<>();
 
@@ -367,6 +370,10 @@ public class CommandsManager extends ListenerAdapter {
             case "get_avatar" -> {
                 var user = event.getOption("user").getAsUser().getEffectiveAvatarUrl();
                 event.reply(user).queue();
+            }
+
+            case "randomize_status" -> {
+                sm.randomizeStatus(event);
             }
         }
     }

@@ -4,6 +4,7 @@ import com.nic7.bot.ID;
 import com.nic7.bot.util;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.events.Event;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.events.user.update.UserUpdateActivitiesEvent;
@@ -20,10 +21,14 @@ public class StatusManager extends ListenerAdapter {
             "Hello Steven...",
             "Hello Aiden..."};
 
-    @Override
-    public void onReady(ReadyEvent event) {
+    public void randomizeStatus(Event event) {
         Random r = new Random();
         event.getJDA().getPresence().setActivity(Activity.customStatus(defaultStatusList[r.nextInt(0,4)]));
+    }
+
+    @Override
+    public void onReady(ReadyEvent event) {
+        randomizeStatus(event);
     }
 
     @Override
