@@ -21,14 +21,10 @@ public class StatusManager extends ListenerAdapter {
             "Hello Steven...",
             "Hello Aiden..."};
 
-    public void randomizeStatus(Event event) {
-        Random r = new Random();
-        event.getJDA().getPresence().setActivity(Activity.customStatus(defaultStatusList[r.nextInt(0,4)]));
-    }
-
     @Override
     public void onReady(ReadyEvent event) {
-        randomizeStatus(event);
+        Random r = new Random();
+        event.getJDA().getPresence().setActivity(Activity.customStatus(defaultStatusList[r.nextInt(0,defaultStatusList.length)]));
     }
 
     @Override
