@@ -10,16 +10,20 @@ import net.dv8tion.jda.api.events.user.update.UserUpdateActivitiesEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Random;
+
 public class StatusManager extends ListenerAdapter {
 
-    @Override
-    public void onUserUpdateActivities(@NotNull UserUpdateActivitiesEvent event) {
-
-    }
+    public static String[] defaultStatusList = {
+            "Hello Sigma Nation!",
+            "Default Status Here",
+            "Hello Steven...",
+            "Hello Aiden..."};
 
     @Override
     public void onReady(ReadyEvent event) {
-        event.getJDA().getPresence().setActivity(Activity.customStatus("Default Status Here"));
+        Random r = new Random();
+        event.getJDA().getPresence().setActivity(Activity.customStatus(defaultStatusList[r.nextInt(0,4)]));
     }
 
     @Override
