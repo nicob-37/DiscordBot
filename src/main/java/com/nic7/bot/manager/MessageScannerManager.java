@@ -32,11 +32,24 @@ public class MessageScannerManager extends ListenerAdapter {
         if (message.toLowerCase().contains("burger")) {event.getMessage().addReaction(Emoji.fromUnicode("\uD83C\uDF54")).queue();}
 
         // Andy or Aiden
-        if ( (event.getAuthor().getId().equals(ID.ANDY) && util.andyBruh)|| (event.getAuthor().getId().equals(ID.AIDEN) && util.aidenBruh) ) {
+        if ((event.getAuthor().getId().equals(ID.ANDY) && util.andyBruh) || (event.getAuthor().getId().equals(ID.AIDEN) && util.aidenBruh)) {
+
             event.getMessage().addReaction(Emoji.fromUnicode("\uD83C\uDDE7")).queue(v -> {
                 event.getMessage().addReaction(Emoji.fromUnicode("\uD83C\uDDF7")).queue(v2 -> {
                     event.getMessage().addReaction(Emoji.fromUnicode("\uD83C\uDDFA")).queue(v3 -> {
-                        event.getMessage().addReaction(Emoji.fromUnicode("\uD83C\uDDED")).queue();
+                        event.getMessage().addReaction(Emoji.fromUnicode("\uD83C\uDDED")).queue(v4 -> {
+
+                            String fileName = event.getAuthor().getId().equals(ID.ANDY) ? "andy.png" : "professor.gif";
+                            String path = "/com/nic7/bot/file/" + fileName;
+
+                            try (java.io.InputStream stream = getClass().getResourceAsStream(path)) {
+                                if (stream != null) {
+                                    event.getMessage().replyFiles(FileUpload.fromData(stream, fileName)).queue();
+                                }
+                            } catch (java.io.IOException e) {
+                                e.printStackTrace();
+                            }
+                        });
                     });
                 });
             });
