@@ -23,6 +23,8 @@ import java.util.List;
 public class CommandsManager extends ListenerAdapter {
     List<SlashCommandEx> commands = new ArrayList<>();
 
+    public static boolean commandsEnabled = true;
+
     // Initializes Commands On Bot Ready
     @Override
     public void onReady(@NotNull net.dv8tion.jda.api.events.session.ReadyEvent event) {
@@ -97,6 +99,8 @@ public class CommandsManager extends ListenerAdapter {
     public void initSlashCommandsEx(@NotNull net.dv8tion.jda.api.events.session.ReadyEvent event) {
         var guild = event.getJDA().getGuildById(ID.SIG_NATION);
 
+        commands.add(new SlashCommandEx("toggle_commands", ".", true, ID.NICO));
+
         commands.add(new SlashCommandEx("stop", "Stops Bot", true, ID.NICO));
         commands.add(new SlashCommandEx("restart", "Restarts and checks for updates", true, ID.NICO));
         commands.add(new SlashCommandEx("version", "Get current bot version", true, ID.NICO));
@@ -135,120 +139,120 @@ public class CommandsManager extends ListenerAdapter {
 
     @Deprecated
     public void onSlashCommandInteraction_OLD(@NotNull SlashCommandInteractionEvent event) {
-        switch (event.getName()) {
 
-            case "stop" -> {
-                if (!event.getUser().getId().equals(ID.NICO)) {
-                    event.reply("Nice try, " + event.getUser().getEffectiveName()).setEphemeral(true).queue();
-                    return;
-                }
-                else {
-                    event.reply("Shutting Down nic7").queue();
-                    event.getJDA().shutdown();
-                    System.out.println("Bot was shut down by " + event.getUser().getName());
-                    System.exit(0);
-                }
-            }
+        if (commandsEnabled || event.getUser().getId().equals(ID.NICO)) {
+            switch (event.getName()) {
 
-            case "restart" -> {
-                if (!event.getUser().getId().equals(ID.NICO)) {
-                    event.reply("Nice try, " + event.getUser().getEffectiveName()).setEphemeral(true).queue();
-                    return;
-                }
-
-                event.reply("Restarting and checking for update...").queue(success -> {
-                    try {
-                        // setsid runs the script in its own session, independent of the bot
-                        ProcessBuilder pb = new ProcessBuilder("setsid", "sh", "/home/ubuntu/DiscordBot/update_bot.sh");
-                        pb.start();
-
-                        // Wait 1 second to ensure the script has actually started
-                        Thread.sleep(1000);
-
+                case "stop" -> {
+                    if (!event.getUser().getId().equals(ID.NICO)) {
+                        event.reply("Nice try, " + event.getUser().getEffectiveName()).setEphemeral(true).queue();
+                        return;
+                    } else {
+                        event.reply("Shutting Down nic7").queue();
                         event.getJDA().shutdown();
+                        System.out.println("Bot was shut down by " + event.getUser().getName());
                         System.exit(0);
-                    } catch (Exception e) {
-                        event.getChannel().sendMessage("Critical error: " + e.getMessage()).queue();
                     }
-                });
-            }
-
-            case "ping" -> event.reply("pong " + event.getMember().getEffectiveName()).queue();
-
-            case "version" -> event.reply("Version #" + util.VERSION).queue();
-
-            case "toggle_andy_reply" -> {
-                if (!event.getUser().getId().equals(ID.NICO)) {
-                    event.reply("Nice try, " + event.getUser().getEffectiveName()).queue();
-                } else {
-                    util.andyReply = util.toggleBoolean(util.andyReply);
-                    event.reply("Andy Reply is now " + util.andyReply).setEphemeral(true).queue();
-                }
-            }
-
-            case "toggle_react_bruh" -> {
-                if (!event.getUser().getId().equals(ID.NICO)) {
-                    event.reply("Nice try, " + event.getUser().getEffectiveName()).queue();
-                    return;
-                } else {
-                    String user = event.getOption("user").getAsUser().getId();
-                    String returnMessage;
-
-                    if (user.equals(ID.ANDY)) {
-                        util.andyBruh = util.toggleBoolean(util.andyBruh);
-                        returnMessage = "Andy Bruh is now " + util.andyBruh;
-                    }
-                    else if (user.equals(ID.AIDEN)) {
-                        util.aidenBruh = util.toggleBoolean(util.aidenBruh);
-                        returnMessage = "Aiden Bruh is now " + util.aidenBruh;
-                    }
-                    else {
-                        returnMessage = "User not valid";
-                    }
-                    event.reply(returnMessage).setEphemeral(true).queue();
-                }
-            }
-
-            case "redditpost" -> {
-                String postBody = event.getOption("body").getAsString();
-                String postTitle = event.getOption("title").getAsString();
-                var attachmentOption = event.getOption("attachment");
-
-                var replyAction = event.reply(
-                        "# " + postTitle
-                                + "\n"
-                                + postBody
-                                + "\n"
-                                + "-# __" + "Post created by " + event.getUser().getName() + "__");
-
-                if (attachmentOption != null) {
-                    Message.Attachment attachment = attachmentOption.getAsAttachment();
-                    replyAction.addFiles(FileUpload.fromData(attachment.getProxy().download().join(), attachment.getFileName()));
                 }
 
-                replyAction.queue(hook -> {
-                    hook.retrieveOriginal().queue(message -> {
-                        message.addReaction(Emoji.fromCustom("updoot", 1474560551773536366L, false)).queue();
-                        message.addReaction(Emoji.fromCustom("downdoot", 1474560608346312936L, false)).queue();
+                case "restart" -> {
+                    if (!event.getUser().getId().equals(ID.NICO)) {
+                        event.reply("Nice try, " + event.getUser().getEffectiveName()).setEphemeral(true).queue();
+                        return;
+                    }
+
+                    event.reply("Restarting and checking for update...").queue(success -> {
+                        try {
+                            // setsid runs the script in its own session, independent of the bot
+                            ProcessBuilder pb = new ProcessBuilder("setsid", "sh", "/home/ubuntu/DiscordBot/update_bot.sh");
+                            pb.start();
+
+                            // Wait 1 second to ensure the script has actually started
+                            Thread.sleep(1000);
+
+                            event.getJDA().shutdown();
+                            System.exit(0);
+                        } catch (Exception e) {
+                            event.getChannel().sendMessage("Critical error: " + e.getMessage()).queue();
+                        }
                     });
-                });
-
-            }
-
-            case "set_status" -> {
-                if (!event.getUser().getId().equals(ID.NICO)) {
-                    event.reply("Nice try, " + event.getUser().getEffectiveName()).setEphemeral(true).queue();
-                    return;
                 }
-                else {
-                    String newActivity = event.getOption("status").getAsString();
 
-                    event.getJDA().getPresence().setActivity(Activity.customStatus(newActivity));
-                    event.reply("Status updated to: ** " + newActivity + "**").queue();
+                case "ping" -> event.reply("pong " + event.getMember().getEffectiveName()).queue();
+
+                case "version" -> event.reply("Version #" + util.VERSION).queue();
+
+                case "toggle_andy_reply" -> {
+                    if (!event.getUser().getId().equals(ID.NICO)) {
+                        event.reply("Nice try, " + event.getUser().getEffectiveName()).queue();
+                    } else {
+                        util.andyReply = util.toggleBoolean(util.andyReply);
+                        event.reply("Andy Reply is now " + util.andyReply).setEphemeral(true).queue();
+                    }
                 }
-            }
 
-            case "get_id" -> event.reply(event.getOption("user").getAsUser().getEffectiveName() +"'s ID is: " + event.getOption("user").getAsUser().getId()).queue();
+                case "toggle_react_bruh" -> {
+                    if (!event.getUser().getId().equals(ID.NICO)) {
+                        event.reply("Nice try, " + event.getUser().getEffectiveName()).queue();
+                        return;
+                    } else {
+                        String user = event.getOption("user").getAsUser().getId();
+                        String returnMessage;
+
+                        if (user.equals(ID.ANDY)) {
+                            util.andyBruh = util.toggleBoolean(util.andyBruh);
+                            returnMessage = "Andy Bruh is now " + util.andyBruh;
+                        } else if (user.equals(ID.AIDEN)) {
+                            util.aidenBruh = util.toggleBoolean(util.aidenBruh);
+                            returnMessage = "Aiden Bruh is now " + util.aidenBruh;
+                        } else {
+                            returnMessage = "User not valid";
+                        }
+                        event.reply(returnMessage).setEphemeral(true).queue();
+                    }
+                }
+
+                case "redditpost" -> {
+                    String postBody = event.getOption("body").getAsString();
+                    String postTitle = event.getOption("title").getAsString();
+                    var attachmentOption = event.getOption("attachment");
+
+                    var replyAction = event.reply(
+                            "# " + postTitle
+                                    + "\n"
+                                    + postBody
+                                    + "\n"
+                                    + "-# __" + "Post created by " + event.getUser().getName() + "__");
+
+                    if (attachmentOption != null) {
+                        Message.Attachment attachment = attachmentOption.getAsAttachment();
+                        replyAction.addFiles(FileUpload.fromData(attachment.getProxy().download().join(), attachment.getFileName()));
+                    }
+
+                    replyAction.queue(hook -> {
+                        hook.retrieveOriginal().queue(message -> {
+                            message.addReaction(Emoji.fromCustom("updoot", 1474560551773536366L, false)).queue();
+                            message.addReaction(Emoji.fromCustom("downdoot", 1474560608346312936L, false)).queue();
+                        });
+                    });
+
+                }
+
+                case "set_status" -> {
+                    if (!event.getUser().getId().equals(ID.NICO)) {
+                        event.reply("Nice try, " + event.getUser().getEffectiveName()).setEphemeral(true).queue();
+                        return;
+                    } else {
+                        String newActivity = event.getOption("status").getAsString();
+
+                        event.getJDA().getPresence().setActivity(Activity.customStatus(newActivity));
+                        event.reply("Status updated to: ** " + newActivity + "**").queue();
+                    }
+                }
+
+                case "get_id" ->
+                        event.reply(event.getOption("user").getAsUser().getEffectiveName() + "'s ID is: " + event.getOption("user").getAsUser().getId()).queue();
+            }
         }
     }
 
@@ -271,104 +275,110 @@ public class CommandsManager extends ListenerAdapter {
             }
         }
 
-        switch (event.getName()) {
+        if (event.getUser().getId().equals(ID.NICO) || commandsEnabled) {
 
-            case "stop" -> {
-                event.reply("Shutting Down nic7").queue();
-                event.getJDA().shutdown();
-                System.exit(0);
-            }
+            switch (event.getName()) {
 
-            case "restart" -> {
-                event.reply("Restarting and checking for update...").queue(success -> {
-                    try {
-                        // setsid runs the script in its own session, independent of the bot
-                        ProcessBuilder pb = new ProcessBuilder("setsid", "sh", "/home/ubuntu/DiscordBot/update_bot.sh");
-                        pb.start();
-
-                        // Wait 1 second to ensure the script has actually started
-                        Thread.sleep(1000);
-
-                        event.getJDA().shutdown();
-                        System.exit(0);
-                    } catch (Exception e) {
-                        event.getChannel().sendMessage("Critical error: " + e.getMessage()).queue();
-                    }
-                });
-            }
-
-            case "ping" -> {
-                event.reply("Pong").queue();
-            }
-
-            case "version" -> {
-                event.reply("Version #" + util.VERSION).queue();
-            }
-
-            case "set_status" -> {
-                String newActivity = event.getOption("status").getAsString();
-
-                event.getJDA().getPresence().setActivity(Activity.customStatus(newActivity));
-                event.reply("Status updated to: ** " + newActivity + "**").queue();
-            }
-
-            case "reddit_post" -> {
-                String postBody = event.getOption("body").getAsString();
-                String postTitle = event.getOption("title").getAsString();
-                var attachmentOption = event.getOption("attachment");
-
-                var replyAction = event.reply(
-                        "# " + postTitle
-                                + "\n"
-                                + postBody
-                                + "\n"
-                                + "-# __" + "Post created by " + event.getUser().getName() + "__");
-
-                if (attachmentOption != null) {
-                    Message.Attachment attachment = attachmentOption.getAsAttachment();
-                    replyAction.addFiles(FileUpload.fromData(attachment.getProxy().download().join(), attachment.getFileName()));
+                case "toggle_commands" -> {
+                    commandsEnabled = util.toggleBoolean(commandsEnabled);
+                    event.reply("Commands are now " + (commandsEnabled ? "**True**" : "**False**")).setEphemeral(true).queue();
                 }
 
-                replyAction.queue(hook -> {
-                    hook.retrieveOriginal().queue(message -> {
-                        message.addReaction(Emoji.fromCustom("updoot", 1474560551773536366L, false)).queue();
-                        message.addReaction(Emoji.fromCustom("downdoot", 1474560608346312936L, false)).queue();
+                case "stop" -> {
+                    event.reply("Shutting Down nic7").queue();
+                    event.getJDA().shutdown();
+                    System.exit(0);
+                }
+
+                case "restart" -> {
+                    event.reply("Restarting and checking for update...").queue(success -> {
+                        try {
+                            // setsid runs the script in its own session, independent of the bot
+                            ProcessBuilder pb = new ProcessBuilder("setsid", "sh", "/home/ubuntu/DiscordBot/update_bot.sh");
+                            pb.start();
+
+                            // Wait 1 second to ensure the script has actually started
+                            Thread.sleep(1000);
+
+                            event.getJDA().shutdown();
+                            System.exit(0);
+                        } catch (Exception e) {
+                            event.getChannel().sendMessage("Critical error: " + e.getMessage()).queue();
+                        }
                     });
-                });
-            }
-
-            case "toggle_andy_reply" -> {
-                util.andyReply = util.toggleBoolean(util.andyReply);
-                event.reply("Andy Reply is now " + util.andyReply).setEphemeral(true).queue();
-            }
-
-            case "toggle_bruh" -> {
-                var user = event.getOption("user").getAsUser().getId();
-
-                if (user.equals(ID.ANDY)) {
-                    util.andyBruh = util.toggleBoolean(util.andyBruh);
-                    event.reply("andyBruh is now " + util.andyBruh).setEphemeral(true).queue();
-                }
-                else if (user.equals(ID.AIDEN)) {
-                    util.aidenBruh = util.toggleBoolean(util.aidenBruh);
-                    event.reply("aidenBruh is now " + util.aidenBruh).setEphemeral(true).queue();
-                }
-                else {
-                    event.deferReply().queue();
-                    return;
                 }
 
-            }
+                case "ping" -> {
+                    event.reply("Pong").queue();
+                }
 
-            case "message" -> {
-                var message = event.getOption("body").getAsString();
-                event.getChannel().sendMessage(message).queue();
-                event.deferReply().setEphemeral(true).queue();
-            }
+                case "version" -> {
+                    event.reply("Version #" + util.VERSION).queue();
+                }
 
-            case "get_avatar" -> {
-                var user = event.getOption("user").getAsUser().getEffectiveAvatarUrl();
-                event.reply(user).queue();
+                case "set_status" -> {
+                    String newActivity = event.getOption("status").getAsString();
+
+                    event.getJDA().getPresence().setActivity(Activity.customStatus(newActivity));
+                    event.reply("Status updated to: ** " + newActivity + "**").queue();
+                }
+
+                case "reddit_post" -> {
+                    String postBody = event.getOption("body").getAsString();
+                    String postTitle = event.getOption("title").getAsString();
+                    var attachmentOption = event.getOption("attachment");
+
+                    var replyAction = event.reply(
+                            "# " + postTitle
+                                    + "\n"
+                                    + postBody
+                                    + "\n"
+                                    + "-# __" + "Post created by " + event.getUser().getName() + "__");
+
+                    if (attachmentOption != null) {
+                        Message.Attachment attachment = attachmentOption.getAsAttachment();
+                        replyAction.addFiles(FileUpload.fromData(attachment.getProxy().download().join(), attachment.getFileName()));
+                    }
+
+                    replyAction.queue(hook -> {
+                        hook.retrieveOriginal().queue(message -> {
+                            message.addReaction(Emoji.fromCustom("updoot", 1474560551773536366L, false)).queue();
+                            message.addReaction(Emoji.fromCustom("downdoot", 1474560608346312936L, false)).queue();
+                        });
+                    });
+                }
+
+                case "toggle_andy_reply" -> {
+                    util.andyReply = util.toggleBoolean(util.andyReply);
+                    event.reply("Andy Reply is now " + util.andyReply).setEphemeral(true).queue();
+                }
+
+                case "toggle_bruh" -> {
+                    var user = event.getOption("user").getAsUser().getId();
+
+                    if (user.equals(ID.ANDY)) {
+                        util.andyBruh = util.toggleBoolean(util.andyBruh);
+                        event.reply("andyBruh is now " + util.andyBruh).setEphemeral(true).queue();
+                    } else if (user.equals(ID.AIDEN)) {
+                        util.aidenBruh = util.toggleBoolean(util.aidenBruh);
+                        event.reply("aidenBruh is now " + util.aidenBruh).setEphemeral(true).queue();
+                    } else {
+                        event.deferReply().queue();
+                        return;
+                    }
+
+                }
+
+                case "message" -> {
+                    var message = event.getOption("body").getAsString();
+                    event.getChannel().sendMessage(message).queue();
+                    event.deferReply().setEphemeral(true).queue();
+                }
+
+                case "get_avatar" -> {
+                    var user = event.getOption("user").getAsUser().getEffectiveAvatarUrl();
+                    event.reply(user).queue();
+                }
             }
         }
     }
