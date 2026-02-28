@@ -22,6 +22,7 @@ import java.util.List;
 
 public class CommandsManager extends ListenerAdapter {
     List<SlashCommandEx> commands = new ArrayList<>();
+    StatusManager sm = new StatusManager();
 
     public static boolean commandsEnabled = true;
 
@@ -62,40 +63,6 @@ public class CommandsManager extends ListenerAdapter {
                         .anyMatch(role -> role.getId().equals(authorizedID));
     }
 
-    public void initSlashCommands(@NotNull net.dv8tion.jda.api.events.session.ReadyEvent event) {
-        List<SlashCommandData> commands = new ArrayList<>();
-
-        commands.add(Commands.slash("stop", "Stops Bot"));
-        commands.add(Commands.slash("restart", "Restarts the bot"));
-        commands.add(Commands.slash("version", "Get current bot version"));
-        commands.add(Commands.slash("ping", "pong"));
-
-        commands.add(Commands.slash("toggle_andy_reply", "Toggle Andy heartbreak reply"));
-        commands.add(Commands.slash("toggle_react_bruh", "Toggle Bruh Reaction")
-                .addOption(OptionType.USER, "user", "Aiden or Andy", true));
-
-        commands.add(Commands.slash("set_status", "Sets the custom status of nic7")
-                .addOption(OptionType.STRING, "status", "Status", true));
-
-        commands.add(Commands.slash("redditpost", "Create A Post with Upvotes and Downvotes")
-                .addOption(OptionType.STRING, "title", "The title of your post", true)
-                .addOption(OptionType.STRING, "body", "The Main Content of your post", true)
-                .addOption(OptionType.ATTACHMENT, "attachment", "Add an attachment to your post (optional)", false));
-
-        commands.add(Commands.slash("get_id", "Gets a user's ID")
-                .addOption(OptionType.USER, "user", "user", true));
-
-
-        var guild = event.getJDA().getGuildById(ID.SIG_NATION);
-
-        if (guild != null) {
-            guild.updateCommands().addCommands(commands).queue();
-            System.out.println("Slash Commands Updated for " + guild.getName());
-        } else {
-            System.err.println("Could not find Guild ID: " + ID.SIG_NATION);
-        }
-    }
-
     public void initSlashCommandsEx(@NotNull net.dv8tion.jda.api.events.session.ReadyEvent event) {
         var guild = event.getJDA().getGuildById(ID.SIG_NATION);
 
@@ -134,125 +101,6 @@ public class CommandsManager extends ListenerAdapter {
         if (guild != null) {
             guild.updateCommands().addCommands(jdaData).queue();
             System.out.println("Custom Commands Synced in Sigma Nation");
-        }
-    }
-
-    @Deprecated
-    public void onSlashCommandInteraction_OLD(@NotNull SlashCommandInteractionEvent event) {
-
-        if (commandsEnabled || event.getUser().getId().equals(ID.NICO)) {
-            switch (event.getName()) {
-
-                case "stop" -> {
-                    if (!event.getUser().getId().equals(ID.NICO)) {
-                        event.reply("Nice try, " + event.getUser().getEffectiveName()).setEphemeral(true).queue();
-                        return;
-                    } else {
-                        event.reply("Shutting Down nic7").queue();
-                        event.getJDA().shutdown();
-                        System.out.println("Bot was shut down by " + event.getUser().getName());
-                        System.exit(0);
-                    }
-                }
-
-                case "restart" -> {
-                    if (!event.getUser().getId().equals(ID.NICO)) {
-                        event.reply("Nice try, " + event.getUser().getEffectiveName()).setEphemeral(true).queue();
-                        return;
-                    }
-
-                    event.reply("Restarting and checking for update...").queue(success -> {
-                        try {
-                            // setsid runs the script in its own session, independent of the bot
-                            ProcessBuilder pb = new ProcessBuilder("setsid", "sh", "/home/ubuntu/DiscordBot/update_bot.sh");
-                            pb.start();
-
-                            // Wait 1 second to ensure the script has actually started
-                            Thread.sleep(1000);
-
-                            event.getJDA().shutdown();
-                            System.exit(0);
-                        } catch (Exception e) {
-                            event.getChannel().sendMessage("Critical error: " + e.getMessage()).queue();
-                        }
-                    });
-                }
-
-                case "ping" -> event.reply("pong " + event.getMember().getEffectiveName()).queue();
-
-                case "version" -> event.reply("Version #" + util.VERSION).queue();
-
-                case "toggle_andy_reply" -> {
-                    if (!event.getUser().getId().equals(ID.NICO)) {
-                        event.reply("Nice try, " + event.getUser().getEffectiveName()).queue();
-                    } else {
-                        util.andyReply = util.toggleBoolean(util.andyReply);
-                        event.reply("Andy Reply is now " + util.andyReply).setEphemeral(true).queue();
-                    }
-                }
-
-                case "toggle_react_bruh" -> {
-                    if (!event.getUser().getId().equals(ID.NICO)) {
-                        event.reply("Nice try, " + event.getUser().getEffectiveName()).queue();
-                        return;
-                    } else {
-                        String user = event.getOption("user").getAsUser().getId();
-                        String returnMessage;
-
-                        if (user.equals(ID.ANDY)) {
-                            util.andyBruh = util.toggleBoolean(util.andyBruh);
-                            returnMessage = "Andy Bruh is now " + util.andyBruh;
-                        } else if (user.equals(ID.AIDEN)) {
-                            util.aidenBruh = util.toggleBoolean(util.aidenBruh);
-                            returnMessage = "Aiden Bruh is now " + util.aidenBruh;
-                        } else {
-                            returnMessage = "User not valid";
-                        }
-                        event.reply(returnMessage).setEphemeral(true).queue();
-                    }
-                }
-
-                case "redditpost" -> {
-                    String postBody = event.getOption("body").getAsString();
-                    String postTitle = event.getOption("title").getAsString();
-                    var attachmentOption = event.getOption("attachment");
-
-                    var replyAction = event.reply(
-                            "# " + postTitle
-                                    + "\n"
-                                    + postBody
-                                    + "\n"
-                                    + "-# __" + "Post created by " + event.getUser().getName() + "__");
-
-                    if (attachmentOption != null) {
-                        Message.Attachment attachment = attachmentOption.getAsAttachment();
-                        replyAction.addFiles(FileUpload.fromData(attachment.getProxy().download().join(), attachment.getFileName()));
-                    }
-
-                    replyAction.queue(hook -> {
-                        hook.retrieveOriginal().queue(message -> {
-                            message.addReaction(Emoji.fromCustom("updoot", 1474560551773536366L, false)).queue();
-                            message.addReaction(Emoji.fromCustom("downdoot", 1474560608346312936L, false)).queue();
-                        });
-                    });
-
-                }
-
-                case "set_status" -> {
-                    if (!event.getUser().getId().equals(ID.NICO)) {
-                        event.reply("Nice try, " + event.getUser().getEffectiveName()).setEphemeral(true).queue();
-                        return;
-                    } else {
-                        String newActivity = event.getOption("status").getAsString();
-
-                        event.getJDA().getPresence().setActivity(Activity.customStatus(newActivity));
-                        event.reply("Status updated to: ** " + newActivity + "**").queue();
-                    }
-                }
-
-                case "get_id" ->
-                        event.reply(event.getOption("user").getAsUser().getEffectiveName() + "'s ID is: " + event.getOption("user").getAsUser().getId()).queue();
-            }
         }
     }
 
@@ -379,6 +227,11 @@ public class CommandsManager extends ListenerAdapter {
                     var user = event.getOption("user").getAsUser().getEffectiveAvatarUrl();
                     event.reply(user).queue();
                 }
+
+                case "randomize_status" -> {
+                    event.getJDA().getPresence().setActivity(Activity.customStatus(sm.randomStatus()));
+                }
+
             }
         }
     }

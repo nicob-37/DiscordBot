@@ -5,6 +5,7 @@ import com.nic7.bot.util;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.Event;
+import net.dv8tion.jda.api.events.StatusChangeEvent;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.events.user.update.UserUpdateActivitiesEvent;
@@ -14,25 +15,23 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Random;
 
 public class StatusManager extends ListenerAdapter {
+    Random r = new Random();
 
     public static String[] defaultStatusList = {
             "Hello Sigma Nation!",
             "Default Status Here",
             "Hello Steven...",
-            "Hello Aiden..."};
+            "Insert Status Here",
+            "|---|---|---|"
+    };
 
     @Override
     public void onReady(ReadyEvent event) {
-        Random r = new Random();
-        event.getJDA().getPresence().setActivity(Activity.customStatus(defaultStatusList[r.nextInt(0,defaultStatusList.length)]));
+        event.getJDA().getPresence().setActivity(Activity.customStatus(randomStatus()));
     }
 
-    @Override
-    public void onMessageDelete(MessageDeleteEvent event) {
-        String message = event.getRawData().toString();
-
-        var NIC7_LOGS = event.getGuild().getTextChannelById(ID.NIC7_LOGS);
-
-        NIC7_LOGS.sendMessage(message).queue();
+    public String randomStatus() {
+        return (defaultStatusList[r.nextInt(0,defaultStatusList.length)]);
     }
+
 }
