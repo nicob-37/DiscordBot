@@ -68,6 +68,8 @@ public class CommandsManager extends ListenerAdapter {
 
         commands.add(new SlashCommandEx("toggle_commands", ".", true, ID.NICO));
 
+        commands.add(new SlashCommandEx("view_toggles", "View which settings are on or off"));
+
         commands.add(new SlashCommandEx("stop", "Stops Bot", true, ID.NICO));
         commands.add(new SlashCommandEx("restart", "Restarts and checks for updates", true, ID.NICO));
         commands.add(new SlashCommandEx("version", "Get current bot version", true, ID.NICO));
@@ -232,7 +234,14 @@ public class CommandsManager extends ListenerAdapter {
                     event.getJDA().getPresence().setActivity(Activity.customStatus(sm.randomStatus()));
                 }
 
+                case "view_toggles" -> {
+
+
+                }
+
             }
+        } else {
+            event.deferReply().queue();
         }
     }
 
