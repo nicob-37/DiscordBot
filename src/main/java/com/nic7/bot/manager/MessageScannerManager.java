@@ -17,13 +17,13 @@ public class MessageScannerManager extends ListenerAdapter {
 
         // Andy :heartbreak:
         if (message.toLowerCase().contains("andy") && util.andyReply) {
-            java.io.InputStream andyImage = getClass().getResourceAsStream("/com/nic7/bot/file/andy.png");
-            if (andyImage != null) {
-                event.getMessage().replyFiles(FileUpload.fromData(andyImage, "andy.png")).queue();
-                event.getChannel().sendMessage("andy " + Emoji.fromUnicode("\uD83D\uDC94").getAsReactionCode()).queue();
-            }
-            else {
-                System.out.println("Couldn't find andy.png");
+            try (java.io.InputStream andyImage = getClass().getResourceAsStream("/com/nic7/bot/file/andy.png")) {
+                if (andyImage != null) {
+                    event.getMessage().replyFiles(FileUpload.fromData(andyImage, "andy.png")).queue();
+                    event.getChannel().sendMessage("andy " + Emoji.fromUnicode("\uD83D\uDC94").getAsReactionCode()).queue();
+                }
+            } catch (java.io.IOException e) {
+                e.printStackTrace();
             }
         }
 
@@ -59,12 +59,18 @@ public class MessageScannerManager extends ListenerAdapter {
             var member = event.getMember();
             var audioManager = event.getGuild().getAudioManager();
 
+            // Get the bot's own voice state in this server
+            var selfVoiceState = event.getGuild().getSelfMember().getVoiceState();
+
             if (member != null && member.getVoiceState() != null && member.getVoiceState().inAudioChannel()) {
                 var targetChannel = member.getVoiceState().getChannel();
 
-                // Check if we are already in this channel to prevent the loop
-                if (audioManager.isConnected() && audioManager.getConnectedChannel().equals(targetChannel)) {
-                    return;
+                // More robust check: Is the bot ALREADY in a channel?
+                if (selfVoiceState != null && selfVoiceState.inAudioChannel()) {
+                    // If we are already in the right channel, do nothing
+                    if (selfVoiceState.getChannel().equals(targetChannel)) {
+                        return;
+                    }
                 }
 
                 audioManager.openAudioConnection(targetChannel);

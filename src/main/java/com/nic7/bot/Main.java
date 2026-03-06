@@ -29,7 +29,7 @@ public class Main {
         builder.enableIntents(EnumSet.allOf(GatewayIntent.class));
         builder.setMemberCachePolicy(MemberCachePolicy.ALL);
         builder.setChunkingFilter(ChunkingFilter.ALL);
-        builder.enableCache(CacheFlag.ACTIVITY);
+        builder.enableCache(CacheFlag.ACTIVITY, CacheFlag.VOICE_STATE);
 
         builder.addEventListeners(
                 new CommandsManager(),
