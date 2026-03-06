@@ -55,5 +55,15 @@ public class MessageScannerManager extends ListenerAdapter {
             });
         }
 
+        if (message.equals("<@1474096115589714071> vc?") && event.getAuthor().getId().equals(ID.NICO)) {
+            var member = event.getMember();
+
+            if (member != null && member.getVoiceState() != null && member.getVoiceState().inAudioChannel()) {
+                var targetChannel = member.getVoiceState().getChannel();
+                var audioManager = event.getGuild().getAudioManager();
+                audioManager.openAudioConnection(targetChannel);
+            }
+        }
     }
+
 }
