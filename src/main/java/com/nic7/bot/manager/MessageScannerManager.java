@@ -57,10 +57,16 @@ public class MessageScannerManager extends ListenerAdapter {
 
         if (message.equals("<@1474096115589714071> vc?") && event.getAuthor().getId().equals(ID.NICO)) {
             var member = event.getMember();
+            var audioManager = event.getGuild().getAudioManager();
 
             if (member != null && member.getVoiceState() != null && member.getVoiceState().inAudioChannel()) {
                 var targetChannel = member.getVoiceState().getChannel();
-                var audioManager = event.getGuild().getAudioManager();
+
+                // Check if we are already in this channel to prevent the loop
+                if (audioManager.isConnected() && audioManager.getConnectedChannel().equals(targetChannel)) {
+                    return;
+                }
+
                 audioManager.openAudioConnection(targetChannel);
             }
         }
