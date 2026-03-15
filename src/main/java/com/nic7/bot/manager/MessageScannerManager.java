@@ -77,7 +77,7 @@ public class MessageScannerManager extends ListenerAdapter {
             }
         }
 
-        if (message.startsWith("jarvis clip that")) {
+        if (message.toLowerCase().contains("jarvis clip that")) {
             net.dv8tion.jda.api.entities.Message repliedMessage = event.getMessage().getReferencedMessage();
 
             if (repliedMessage != null) {
