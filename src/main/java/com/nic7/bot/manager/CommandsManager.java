@@ -88,8 +88,9 @@ public class CommandsManager extends ListenerAdapter {
 
         commands.add(new SlashCommandEx("ping", "pong"));
 
-        commands.add(new SlashCommandEx("message", "insert text here", true, ID.NICO)
-                .addOption(OptionType.STRING, "body", "insert text here", true));
+        commands.add(new SlashCommandEx("m", ".", true, ID.NICO)
+                .addOption(OptionType.STRING, "body", ".", true)
+                .addOption(OptionType.ATTACHMENT, "file", ".", false));
 
         commands.add(new SlashCommandEx("get_avatar", "gets a user's custom avatar")
                 .addOption(OptionType.USER, "user", ".", true));
@@ -219,10 +220,22 @@ public class CommandsManager extends ListenerAdapter {
 
                 }
 
-                case "message" -> {
-                    var message = event.getOption("body").getAsString();
-                    event.getChannel().sendMessage(message).queue();
-                    event.deferReply().setEphemeral(true).queue();
+                case "m" -> {
+                    String message = event.getOption("body").getAsString();
+                    var fileOption = event.getOption("file");
+
+                    var sendAction = event.getChannel().sendMessage(message);
+
+                    if (fileOption != null) {
+                        var attachment = fileOption.getAsAttachment();
+                        sendAction.addFiles(FileUpload.fromData(
+                                attachment.getProxy().download().join(),
+                                attachment.getFileName()
+                        ));
+                    }
+
+                    sendAction.queue();
+                    event.reply("Sent: **" + message + "**").setEphemeral(true).queue();
                 }
 
                 case "get_avatar" -> {
