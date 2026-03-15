@@ -76,6 +76,29 @@ public class MessageScannerManager extends ListenerAdapter {
                 audioManager.openAudioConnection(targetChannel);
             }
         }
+
+        if (message.startsWith("jarvis clip that")) {
+            net.dv8tion.jda.api.entities.Message repliedMessage = event.getMessage().getReferencedMessage();
+
+            if (repliedMessage != null) {
+                String originalText = repliedMessage.getContentRaw();
+                String originalAuthor;
+
+                switch (repliedMessage.getAuthor().getId()) {
+                    case ID.AIDEN -> originalAuthor = "Aiden";
+                    case ID.WYATT -> originalAuthor = "Wyatt";
+                    case ID.ANDY -> originalAuthor = "Andy";
+                    case ID.ASPEN -> originalAuthor = "Aspen";
+                    case ID.CARSON -> originalAuthor = "Carson";
+                    case ID.MARI -> originalAuthor = "Mari";
+                    case ID.MACEY -> originalAuthor = "Macey";
+                    case ID.NICO -> originalAuthor = "Nico";
+                    default -> originalAuthor = repliedMessage.getAuthor().getEffectiveName();
+                }
+
+                event.getChannel().sendMessage("nahhh " + Emoji.fromUnicode("\uD83D\uDC80") + " " + originalAuthor + " really said \"" + originalText + "\"");
+            }
+        }
     }
 
 }
