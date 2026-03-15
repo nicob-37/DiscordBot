@@ -96,7 +96,7 @@ public class MessageScannerManager extends ListenerAdapter {
                     default -> originalAuthor = repliedMessage.getAuthor().getEffectiveName();
                 }
 
-                event.getChannel().sendMessage("nahhh " + Emoji.fromUnicode("\uD83D\uDC80") + " " + originalAuthor + " really said \"" + originalText + "\"");
+                event.getChannel().sendMessage("nahhh " + Emoji.fromUnicode("\uD83D\uDC80") + " " + originalAuthor + " really said \"" + originalText + "\"").queue();
             }
         }
     }
