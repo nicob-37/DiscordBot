@@ -255,8 +255,13 @@ public class CommandsManager extends ListenerAdapter {
                 }
 
                 case "random_seymour" -> {
+                    // 1. MUST DEFER FIRST
+                    event.deferReply().queue();
+
                     Random ran = new Random();
                     String[] pieceList = {"helmet", "chestplate", "leggings", "boots"};
+
+                    // Pick the piece ONCE so the Title and URL match
                     String piece = pieceList[ran.nextInt(pieceList.length)];
 
                     String charList = "0123456789ABCDEF";
@@ -266,16 +271,16 @@ public class CommandsManager extends ListenerAdapter {
                     }
                     String hex = hexBuilder.toString();
 
-
                     try {
-                        String urlString = "https://nico-armor-api.vercel.app/api/" + pieceList[ran.nextInt(0,4)] + "/" + hex;
+                        // Use the 'piece' variable we picked above
+                        String urlString = "https://nico-armor-api.vercel.app/api/" + piece + "/" + hex;
                         URL url = new URI(urlString).toURL();
 
                         try (InputStream in = url.openStream()) {
                             byte[] imageBytes = in.readAllBytes();
                             FileUpload file = FileUpload.fromData(imageBytes, "armor.png");
                             EmbedBuilder embed = new EmbedBuilder()
-                                    .setTitle("Dye Result: " + piece.substring(0, 1).toUpperCase() + piece.substring(1))
+                                    .setTitle("Random Dye: " + piece.substring(0, 1).toUpperCase() + piece.substring(1))
                                     .setColor(Color.decode("0x" + hex))
                                     .setImage("attachment://armor.png")
                                     .setFooter("Hex: #" + hex);
@@ -283,10 +288,9 @@ public class CommandsManager extends ListenerAdapter {
                             event.getHook().sendMessageEmbeds(embed.build()).addFiles(file).queue();
                         }
                     } catch (Exception e) {
+                        // Use getHook() since we deferred
                         event.getHook().sendMessage("Failed to generate armor: " + e.getMessage()).setEphemeral(true).queue();
                     }
-
-
                 }
 
             }
