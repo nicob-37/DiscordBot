@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.jetbrains.annotations.NotNull;
@@ -50,6 +51,11 @@ public class CommandsManager extends ListenerAdapter {
 
         public SlashCommandEx addOption(OptionType type, String name, String desc, boolean required) {
             this.data.addOption(type, name, desc, required);
+            return this;
+        }
+
+        public SlashCommandEx addOptions(OptionData... options) {
+            this.data.addOptions(options);
             return this;
         }
 
@@ -96,6 +102,18 @@ public class CommandsManager extends ListenerAdapter {
                 .addOption(OptionType.USER, "user", ".", true));
 
         commands.add(new SlashCommandEx("randomize_status", ".", true, ID.NICO));
+
+        OptionData pieceOption = new OptionData(OptionType.STRING, "piece", "The type of armor", true)
+                .addChoice("Helmet", "helmet")
+                .addChoice("Chestplate", "chestplate")
+                .addChoice("Leggings", "leggings")
+                .addChoice("Boots", "boots");
+
+        OptionData hexOption = new OptionData(OptionType.STRING, "hex", "The Hex color (e.g. FFFFFF)", true);
+
+// Add the command to your list
+        commands.add(new SlashCommandEx("generate_armor", "Generates leather armor")
+                .addOptions(pieceOption, hexOption));
 
         List<SlashCommandData> jdaData = new ArrayList<>();
 
@@ -247,9 +265,13 @@ public class CommandsManager extends ListenerAdapter {
                     event.getJDA().getPresence().setActivity(Activity.customStatus(sm.randomStatus()));
                 }
 
-                case "view_toggles" -> {
+                case "generate_armor" -> {
+                    String piece = event.getOption("piece").getAsString();
+                    String hex = event.getOption("hex").getAsString().replace("#", "");
 
+                    String url = "https://nico-armor-api.vercel.app/api/" + piece + "/" + hex;
 
+                    event.reply(url).queue(); // Or put it in an Embed!
                 }
 
             }

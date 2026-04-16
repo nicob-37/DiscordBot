@@ -99,6 +99,17 @@ public class MessageScannerManager extends ListenerAdapter {
                 event.getChannel().sendMessage("nahhh \uD83D\uDC80 " + originalAuthor + " really said \"" + originalText + "\"").queue();
             }
         }
+
+        if (message.equals("!pin")) {
+            var referencedMessage = event.getMessage().getReferencedMessage();
+
+            if (referencedMessage != null) {
+                referencedMessage.pin().queue();
+            }
+            else {
+                event.getMessage().reply("Must reply to a message to pin").queue();
+            }
+        }
     }
 
 }
