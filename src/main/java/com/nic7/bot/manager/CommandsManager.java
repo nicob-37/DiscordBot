@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Random;
 
 public class CommandsManager extends ListenerAdapter {
-    List<SlashCommandEx> commands = new ArrayList<>();
+    public List<SlashCommandEx> commands = new ArrayList<>();
     StatusManager sm = new StatusManager();
 
     public static boolean commandsEnabled = true;
@@ -113,7 +113,9 @@ public class CommandsManager extends ListenerAdapter {
         OptionData hexOption = new OptionData(OptionType.STRING, "hex", "The Hex color (e.g. FFFFFF)", true);
 
         commands.add(new SlashCommandEx("generate_armor", "Generates leather armor")
-                .addOptions(pieceOption, hexOption));
+                .addOptions(pieceOption, hexOption)
+                .addOption(OptionType.BOOLEAN, "prism", "prism texture by looshy", false)
+        );
 
         commands.add(new SlashCommandEx("random_seymour" ,"gen random piece"));
 
@@ -229,6 +231,7 @@ public class CommandsManager extends ListenerAdapter {
                 case "generate_armor" -> {
                     var pieceOpt = event.getOption("piece");
                     var hexOpt = event.getOption("hex");
+                    boolean prism = event.getOption("prism") != null && event.getOption("prism").getAsBoolean();
                     if (pieceOpt == null || hexOpt == null) return;
 
                     String piece = pieceOpt.getAsString();
@@ -236,7 +239,7 @@ public class CommandsManager extends ListenerAdapter {
                     event.deferReply().queue();
 
                     try {
-                        String urlString = "https://nico-armor-api.vercel.app/api/" + piece + "/" + hex;
+                        String urlString = prism ? "https://nico-armor-api.vercel.app/api/prism/" + piece + "/" + hex : "https://nico-armor-api.vercel.app/api/" + piece + "/" + hex;
                         URL url = new URI(urlString).toURL();
                         try (InputStream in = url.openStream()) {
                             byte[] imageBytes = in.readAllBytes();
