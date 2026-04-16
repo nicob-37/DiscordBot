@@ -266,12 +266,47 @@ public class CommandsManager extends ListenerAdapter {
                 }
 
                 case "generate_armor" -> {
-                    String piece = event.getOption("piece").getAsString();
-                    String hex = event.getOption("hex").getAsString().replace("#", "");
+                    // 1. Get and validate inputs
+                    var pieceOpt = event.getOption("piece");
+                    var hexOpt = event.getOption("hex");
+                    if (pieceOpt == null || hexOpt == null) return;
 
-                    String url = "https://nico-armor-api.vercel.app/api/" + piece + "/" + hex;
+                    String piece = pieceOpt.getAsString();
+                    String hex = hexOpt.getAsString().replace("#", "");
 
-                    event.reply(url).queue(); // Or put it in an Embed!
+                    // Defer the reply because downloading an image can take a second
+                    // and we don't want the command to "time out"
+                    event.deferReply().queue();
+
+                    try {
+                        // 2. Build the URL
+                        String urlString = "https://nico-armor-api.vercel.app/api/" + piece + "/" + hex;
+                        java.net.URL url = new java.net.URI(urlString).toURL();
+
+                        // 3. Download the image bytes
+                        try (java.io.InputStream in = url.openStream()) {
+                            byte[] imageBytes = in.readAllBytes();
+
+                            // 4. Create the FileUpload
+                            // We name it "armor.png" so we can reference it in the embed
+                            FileUpload file = FileUpload.fromData(imageBytes, "armor.png");
+
+                            // 5. Build the Embed
+                            net.dv8tion.jda.api.EmbedBuilder embed = new net.dv8tion.jda.api.EmbedBuilder()
+                                    .setTitle("Dye Result: " + piece.substring(0, 1).toUpperCase() + piece.substring(1))
+                                    .setColor(java.awt.Color.decode("0x" + hex))
+                                    // This magic string "attachment://filename" hides the URL!
+                                    .setImage("attachment://armor.png")
+                                    .setFooter("Hex: #" + hex);
+
+                            // 6. Send the file and the embed together
+                            event.getHook().sendMessageEmbeds(embed.build())
+                                    .addFiles(file)
+                                    .queue();
+                        }
+                    } catch (Exception e) {
+                        event.getHook().sendMessage("Failed to generate armor: " + e.getMessage()).setEphemeral(true).queue();
+                    }
                 }
 
             }
