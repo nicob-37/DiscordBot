@@ -24,6 +24,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class CommandsManager extends ListenerAdapter {
     List<SlashCommandEx> commands = new ArrayList<>();
@@ -113,6 +114,8 @@ public class CommandsManager extends ListenerAdapter {
 
         commands.add(new SlashCommandEx("generate_armor", "Generates leather armor")
                 .addOptions(pieceOption, hexOption));
+
+        commands.add(new SlashCommandEx("random_seymour" ,"gen random piece"));
 
         List<SlashCommandData> jdaData = new ArrayList<>();
         for (SlashCommandEx ex : commands) { jdaData.add(ex.data); }
@@ -250,6 +253,41 @@ public class CommandsManager extends ListenerAdapter {
                         event.getHook().sendMessage("Failed to generate armor: " + e.getMessage()).setEphemeral(true).queue();
                     }
                 }
+
+                case "random_seymour" -> {
+                    Random ran = new Random();
+                    String[] pieceList = {"helmet", "chestplate", "leggings", "boots"};
+                    String piece = pieceList[ran.nextInt(pieceList.length)];
+
+                    String charList = "0123456789ABCDEF";
+                    StringBuilder hexBuilder = new StringBuilder();
+                    for (int i = 0; i < 6; i++) {
+                        hexBuilder.append(charList.charAt(ran.nextInt(charList.length())));
+                    }
+                    String hex = hexBuilder.toString();
+
+
+                    try {
+                        String urlString = "https://nico-armor-api.vercel.app/api/" + pieceList[ran.nextInt(0,4)] + "/" + hex;
+                        URL url = new URI(urlString).toURL();
+                        try (InputStream in = url.openStream()) {
+                            byte[] imageBytes = in.readAllBytes();
+                            FileUpload file = FileUpload.fromData(imageBytes, "armor.png");
+                            EmbedBuilder embed = new EmbedBuilder()
+                                    .setTitle("Dye Result: " + piece.substring(0, 1).toUpperCase() + piece.substring(1))
+                                    .setColor(Color.decode("0x" + hex))
+                                    .setImage("attachment://armor.png")
+                                    .setFooter("Hex: #" + hex);
+
+                            event.getHook().sendMessageEmbeds(embed.build()).addFiles(file).queue();
+                        }
+                    } catch (Exception e) {
+                        event.getHook().sendMessage("Failed to generate armor: " + e.getMessage()).setEphemeral(true).queue();
+                    }
+
+
+                }
+
             }
         } else {
             event.deferReply().queue();
