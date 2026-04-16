@@ -270,6 +270,7 @@ public class CommandsManager extends ListenerAdapter {
                     try {
                         String urlString = "https://nico-armor-api.vercel.app/api/" + pieceList[ran.nextInt(0,4)] + "/" + hex;
                         URL url = new URI(urlString).toURL();
+
                         try (InputStream in = url.openStream()) {
                             byte[] imageBytes = in.readAllBytes();
                             FileUpload file = FileUpload.fromData(imageBytes, "armor.png");
